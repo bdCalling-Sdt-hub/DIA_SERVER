@@ -8,6 +8,7 @@ use App\Models\EmailVerification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Events\SendNotification;
 use Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Models\PasswordReset;
@@ -210,5 +211,16 @@ public function refreshToken()
       else{
         return response()->json(['success'=>false,'message'=>'User is not authenticated.']);
       }
+    }
+    public function sendNotification(Request $request)
+    {
+        try {
+
+            event(new SendNotification($request->message, auth()->user()->id));
+
+            return response()->json(['success'=>true,'msg'=>'Notification Added']);
+        } catch (\Exception $e) {
+            return response()->json(['success'=>false,'msg'=>$e->getMessage()]);
+        }
     }
 }

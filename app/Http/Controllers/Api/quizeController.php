@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\answere;
 use App\Models\category;
 use App\Models\questions;
 use App\Models\sub_category;
@@ -236,18 +237,19 @@ class quizeController extends Controller
         }
     }
 
-    public function deleteQuestion1($id)
+    public function deleteQuestion1Img(Request $request)
     {
-        $questionImg1 = questions::find($id);
-        if(file_exists('image_one' .$questionImg1->images) AND !empty ($StudentImg->images)){
-            unlink ('images' .$StudentImg->images);
+        $questionImg1 = questions::find($request->id);
+        $questionImg1->id = $request->id;
+        if (file_exists('image_one' . $questionImg1->imageOne) AND !empty($questionImg1->image_one)) {
+            unlink('image_one' . $questionImg1->imageOne);
         }
-        $StudentImg->images = "";
-        $StudentImg->save();
-        if($StudentImg == true){
-            return back()->with('error','Student images delete success');
-        }else{
-            return back()->with('error','Student images delete faile');
+        $questionImg1->image_one = '';
+        $questionImg1->save();
+        if ($questionImg1 == true) {
+            return response()->json('questions images delete success');
+        } else {
+            return response()->json('questions images delete faile');
         }
     }
 
@@ -256,7 +258,7 @@ class quizeController extends Controller
         $request->validate([
             'imageTwo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        $image2 = time() . '.' . $request->imageOne->extension();
+        $image2 = time() . '.' . $request->imageTwo->extension();
         $request->imageTwo->move(public_path('images'), $image2);
 
         $updateImage2 = questions::find($request->id);
@@ -268,6 +270,22 @@ class quizeController extends Controller
                 'status' => 'success',
                 'message' => 'Question  image two update success',
             ]);
+        }
+    }
+
+    public function deleteQuestion2Img(Request $request)
+    {
+        $questionImg2 = questions::find($request->id);
+        $questionImg2->id = $request->id;
+        if (file_exists('image_two' . $questionImg2->imageTwo) AND !empty($questionImg2->image_two)) {
+            unlink('image_two' . $questionImg2->imageTwo);
+        }
+        $questionImg2->image_two = '';
+        $questionImg2->save();
+        if ($questionImg2 == true) {
+            return response()->json('questions images delete success');
+        } else {
+            return response()->json('questions images delete faile');
         }
     }
 
@@ -297,6 +315,26 @@ class quizeController extends Controller
 
     public function displayQuestion($id)
     {
-        $question = questions::where('sub_category', $id)->get();
+        $quize = questions::where('sub_catergory', $id)->get();
+        if ($quize) {
+            return response()->json([
+                'status' => 'success',
+                'Quize' => $quize,
+            ]);
+        }
+    }
+
+    public function answare(Request $request)
+    {
+        $auth = Auth::user();
+        $category = answere::create([
+            'category' => $request->input('category'),
+        ]);
+        if ($category) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Category add successfully',
+            ]);
+        }
     }
 }

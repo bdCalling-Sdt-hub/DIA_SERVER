@@ -172,14 +172,14 @@ class UserController extends Controller
 public function profile()
 {
     try{
-      
+
         return response()->json(auth()->user());
     }
     catch(\Exception $e){
         return response()->json(['status'=>false,'message'=>$e->getMessage()]);
     }
-    
-   
+
+
 }
 public function profileUpdate(Request $request){
     if(auth()->user()){
@@ -196,10 +196,10 @@ $user=User::find($request->id);
 $user->name=$request->name ;
 $user->email=$request->email ;
 $user->save();
-return response()->json(['status'=>true,'message'=>'user is updated','Data'=>$user]);  
+return response()->json(['status'=>true,'message'=>'user is updated','Data'=>$user]);
     }
 else{
-    return response()->json(['status'=>false,'message'=>'User is not Authenticated']);  
+    return response()->json(['status'=>false,'message'=>'User is not Authenticated']);
 }
 }
 public function refreshToken()

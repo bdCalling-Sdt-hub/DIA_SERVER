@@ -203,7 +203,7 @@ class quizeController extends Controller
     {
         $updateQuestion = questions::find($request->id);
         $updateQuestion->categoryes = $request->category_id;
-        $updateQuestion->sub_catergory =$request->sub_catergory_id;
+        $updateQuestion->sub_catergory = $request->sub_catergory_id;
         $updateQuestion->questions = $request->question;
         $updateQuestion->ans = $request->ans;
         $updateQuestion->mark = $request->mark;
@@ -211,13 +211,92 @@ class quizeController extends Controller
         if ($subCategory) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'Sub category update success',
+                'message' => 'question update success',
             ]);
         }
     }
 
-    public function inmageOneRemove($id)
+    public function updateQuestionImg1(Request $request)
     {
-        questions::where('image_one',$id)->delete();
+        $request->validate([
+            'imageOne' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $image1 = time() . '.' . $request->imageOne->extension();
+        $request->imageOne->move(public_path('images'), $image1);
+
+        $updateImage1 = questions::find($request->id);
+        $updateImage1->id = $request->id;
+        $updateImage1->image_one = $image1;
+        $updateImage1->save();
+        if ($updateImage1) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Question  imageOne update success',
+            ]);
+        }
+    }
+
+    public function deleteQuestion1($id)
+    {
+        $questionImg1 = questions::find($id);
+        if(file_exists('image_one' .$questionImg1->images) AND !empty ($StudentImg->images)){
+            unlink ('images' .$StudentImg->images);
+        }
+        $StudentImg->images = "";
+        $StudentImg->save();
+        if($StudentImg == true){
+            return back()->with('error','Student images delete success');
+        }else{
+            return back()->with('error','Student images delete faile');
+        }
+    }
+
+    public function updateQuestionImg2(Request $request)
+    {
+        $request->validate([
+            'imageTwo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $image2 = time() . '.' . $request->imageOne->extension();
+        $request->imageTwo->move(public_path('images'), $image2);
+
+        $updateImage2 = questions::find($request->id);
+        $updateImage2->id = $request->id;
+        $updateImage2->image_two = $image2;
+        $updateImage2->save();
+        if ($updateImage2) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Question  image two update success',
+            ]);
+        }
+    }
+
+    public function removeQuestion($id)
+    {
+        $removeQuestion = questions::where('id', $id)->delete();
+        if ($removeQuestion) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Question  delete success',
+            ]);
+        }
+    }
+
+    public function getQuestion()
+    {
+        $questions = questions::all();
+        if ($questions) {
+            return response()->json([
+                'status' => 'success',
+                'Questions' => $questions,
+            ]);
+        }
+    }
+
+    // ======================DISPLAY QUESTION =============//
+
+    public function displayQuestion($id)
+    {
+        $question = questions::where('sub_category', $id)->get();
     }
 }

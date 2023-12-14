@@ -41,8 +41,14 @@ Route::get('/dependncy/category', [quizeController::class, 'categorySubCategory'
 
 // QUESTIONS SECTION //
 
-Route::get('/all/sub/category', [quizeController::class, 'getSubCategory']);
+Route::get('/all/question', [quizeController::class, 'getQuestion']);
 Route::post('/question', [quizeController::class, 'questions']);
 Route::get('/edit/question/{id}', [quizeController::class, 'editQuestion']);
 Route::post('/update/question', [quizeController::class, 'updateQuestion']);
-Route::get('/delete/sub/category/{id}', [quizeController::class, 'deleteSubCategory']);
+Route::post('/update/question/image/one', [quizeController::class, 'updateQuestionImg1']);
+Route::post('/update/question/image/two', [quizeController::class, 'updateQuestionImg2']);
+Route::get('/delete/question/{id}', [quizeController::class, 'removeQuestion']);
+
+// ================= DISPLAY QUIZE ===================//
+
+

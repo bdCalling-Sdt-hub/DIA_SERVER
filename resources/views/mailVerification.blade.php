@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +6,9 @@
 </head>
 <body>
 
-    <p>{{ $data['body'] }}</p>
-    <br>
-    <p>Thank You!</p>
+<p>{{ $data['body'] }}</p>
+<br>
+<p>Thank You!</p>
 
 </body>
 </html>

@@ -1,26 +1,50 @@
 <?php
 
 use App\Http\Controllers\Api\quizeController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\StoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
- * |--------------------------------------------------------------------------
- * | API Routes
- * |--------------------------------------------------------------------------
- * |
- * | Here is where you can register API routes for your application. These
- * | routes are loaded by the RouteServiceProvider and all of them will
- * | be assigned to the "api" middleware group. Make something great!
- * |
- */
+Route::group([
+    'namespace' => 'App\Http\Controllers',
+    'middleware' => 'api',
+], function ($router) {
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    // Routes for both guests and authenticated users
+    Route::post('/register', [UserController::class, 'register']);
+    Route::post('/login', [UserController::class, 'login']);
+    Route::post('/get-otp', [UserController::class, 'sendOtp']);
+    Route::get('/verification/{id}', [UserController::class, 'verification']);
+    Route::post('/verified', [UserController::class, 'verifiedOtp']);
+    Route::get('/resend-otp', [UserController::class, 'resendOtp']);
+    Route::get('/test', [UserController::class, 'test']);
+
+    // Authenticated User Routes
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/logout', [UserController::class, 'logout']);
+        Route::post('/reset-password', [UserController::class, 'resetPassword']);
+        Route::get('/profile', [UserController::class, 'profile']);
+        Route::post('/profileUpdate', [UserController::class, 'profileUpdate']);
+
+        // story and comments api
+        Route::post('add-story', [StoryController::class, 'addStory']);
+
+        Route::post('add-comment',[CommentController::class,'addComment']);
+    });
+
+    // Authenticated User with Admin Role Routes
+    Route::middleware(['auth', 'admin'])->group(function () {
+        // Add more admin-specific routes as needed
+    });
+
+    // Routes for guests (non-authenticated users)
+    Route::group(['middleware' => 'guest'], function () {
+        // Add any routes that should only be accessible to guests here
+    });
+
 });
-
-// CATEGORY //
 
 Route::get('/all/category', [quizeController::class, 'getCategory']);
 Route::post('/category', [quizeController::class, 'Category']);
@@ -56,24 +80,39 @@ Route::get('/delete/question/{id}', [quizeController::class, 'removeQuestion']);
 
 Route::get('/show/question/{id}', [quizeController::class, 'displayQuestion']);
 
-// ===================== Authentikt system ====================== //
 
-Route::post('/register', [UserController::class, 'register']);
-
-Route::post('/login', [UserController::class, 'login']);
-
-Route::get('/verification/{id}', [UserController::class, 'verification']);
-Route::post('/verified', [UserController::class, 'verifiedOtp']);
-
-Route::get('/profile', [UserController::class, 'profile']);
-
-Route::get('/resend-otp', [UserController::class, 'resendOtp']);
-Route::post('getOtp', [UserController::class, 'sendOtp']);
-
-Route::get('/refresh-token', [UserController::class, 'refreshToken']);
-
-Route::group(['middleware' => 'api'], function ($routes) {
-    Route::get('/logout', [UserController::class, 'logout']);
-    Route::post('/reset-password', [UserController::class, 'resetPassword']);
-    Route::post('/profileUpdate', [UserController::class, 'profileUpdate']);
-});
+//Route::group([
+//
+//    'middleware' => 'guest',
+//    'namespace' => 'App\Http\Controllers',
+////    'prefix' => 'auth',
+//
+//
+//], function ($router) {
+//
+//
+//// ===================== Authentication ====================== //
+//
+//    Route::post('/register', [UserController::class, 'register']);
+//    Route::post('/login', [UserController::class, 'login']);
+//    Route::get('/verification/{id}', [UserController::class, 'verification']);
+//    Route::post('/verified', [UserController::class, 'verifiedOtp']);
+//
+//    Route::get('/profile', [UserController::class, 'profile']);
+//    Route::get('/resend-otp', [UserController::class, 'resendOtp']);
+//    Route::post('getOtp', [UserController::class, 'sendOtp']);
+//    Route::get('/refresh-token', [UserController::class, 'refreshToken']);
+//
+////Route::group(['middleware' => 'api'], function ($routes) {
+//    Route::get('/logout', [UserController::class, 'logout']);
+//    Route::post('/reset-password', [UserController::class, 'resetPassword']);
+//    Route::post('/profileUpdate', [UserController::class, 'profileUpdate']);
+////});
+//
+//
+//// story and comments api
+//
+//    Route::post('add-story', [StoryController::class, 'addStory']);
+//
+//
+//});

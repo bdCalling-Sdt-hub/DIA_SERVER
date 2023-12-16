@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\answere;
 use App\Models\category;
 use App\Models\questions;
+use App\Models\Story;
 use App\Models\sub_category;
 use Illuminate\Http\Request;
 
@@ -324,16 +325,44 @@ class quizeController extends Controller
         }
     }
 
+    // ============ Answare ============//
+
     public function answare(Request $request)
     {
         $auth = Auth::user();
         $category = answere::create([
             'category' => $request->input('category'),
+            ''
+
+
         ]);
         if ($category) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'Category add successfully',
+            ]);
+        }
+    }
+
+    // ========================STORY ==================//
+
+    public function story(Request $request)
+    {
+        $request->validate([
+            'imageOne' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $avatar = time() . '.' . $request->avatar->extension();
+        $request->avatar->move(public_path('images'), $avatar);
+        $story = Story::create([
+            'username' => $request->input('name'),
+            'description' => $request->input('description'),
+            'avatar' => $avatar,
+        ]);
+
+        if ($story) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Story add successfully',
             ]);
         }
     }

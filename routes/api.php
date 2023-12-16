@@ -56,6 +56,10 @@ Route::get('/delete/question/{id}', [quizeController::class, 'removeQuestion']);
 
 Route::get('/show/question/{id}', [quizeController::class, 'displayQuestion']);
 
+// =================== STORY CREATE ===========================//
+
+Route::post('/story', [quizeController::class, 'story']);
+
 // ===================== Authentikt system ====================== //
 
 Route::post('/register', [UserController::class, 'register']);
@@ -68,7 +72,7 @@ Route::post('/verified', [UserController::class, 'verifiedOtp']);
 Route::get('/profile', [UserController::class, 'profile']);
 
 Route::get('/resend-otp', [UserController::class, 'resendOtp']);
-Route::post('getOtp', [UserController::class, 'sendOtp']);
+Route::post('/getOtp', [UserController::class, 'sendOtp']);
 
 Route::get('/refresh-token', [UserController::class, 'refreshToken']);
 

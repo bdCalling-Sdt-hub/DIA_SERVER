@@ -60,23 +60,18 @@ Route::get('/show/question/{id}', [quizeController::class, 'displayQuestion']);
 
 Route::post('/story', [quizeController::class, 'story']);
 
-// ===================== Authentikt system ====================== //
+// ===================== AUTHENTIKETION ====================== //
 
 Route::post('/register', [UserController::class, 'register']);
-
 Route::post('/login', [UserController::class, 'login']);
-
-Route::get('/verification/{id}', [UserController::class, 'verification']);
+// Route::get('/verification/{id}', [UserController::class, 'verification']);
 Route::post('/verified', [UserController::class, 'verifiedOtp']);
-
-Route::get('/profile', [UserController::class, 'profile']);
-
-Route::get('/resend-otp', [UserController::class, 'resendOtp']);
+// Route::get('/resend-otp', [UserController::class, 'resendOtp']);
 Route::post('/getOtp', [UserController::class, 'sendOtp']);
-
-Route::get('/refresh-token', [UserController::class, 'refreshToken']);
-
 Route::group(['middleware' => 'api'], function ($routes) {
+    Route::get('/profile', [UserController::class, 'profile']);
+    Route::get('/edit/profile/{id}', [UserController::class, 'profileEdit']);
+    Route::get('/refresh-token', [UserController::class, 'refreshToken']);
     Route::get('/logout', [UserController::class, 'logout']);
     Route::post('/reset-password', [UserController::class, 'resetPassword']);
     Route::post('/profileUpdate', [UserController::class, 'profileUpdate']);

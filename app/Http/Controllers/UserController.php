@@ -170,6 +170,18 @@ class UserController extends Controller
         }
     }
 
+    public function profileEdit($id)
+    {
+        $authUser = auth()->user();
+        if ($authUser) {
+            $editeUser = User::where('id', $id)->first();
+            return response()->json([
+                'status' => 'success',
+                'data' => $editeUser
+            ]);
+        }
+    }
+
     public function profileUpdate(Request $request)
     {
         if (auth()->user()) {

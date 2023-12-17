@@ -12,63 +12,107 @@ use Illuminate\Http\Request;
 
 class quizeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     // CATEGORY //
 
     public function Category(Request $request)
     {
-        $category = category::create([
-            'category' => $request->input('category'),
-        ]);
-        if ($category) {
+        $authUser = auth()->user();
+        if ($authUser) {
+            $category = category::create([
+                'category' => $request->input('category'),
+            ]);
+            if ($category) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Category add successfully',
+                ]);
+            }
+        } else {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Category add successfully',
+                'status' => 'false',
+                'message' => 'plese login',
             ]);
         }
     }
 
     public function editCategory($id)
     {
-        $editCategory = category::where('id', $id)->get();
-        if ($editCategory) {
+        $authUser = auth()->user();
+        if ($authUser) {
+            $editCategory = category::where('id', $id)->get();
+            if ($editCategory) {
+                return response()->json([
+                    'status' => 'success',
+                    'Category' => $editCategory,
+                ]);
+            }
+        } else {
             return response()->json([
-                'status' => 'success',
-                'Category' => $editCategory,
+                'status' => 'false',
+                'message' => 'plese login',
             ]);
         }
     }
 
     public function updateCategory(Request $request)
     {
-        $category = category::find($request->id);
-        $category->category = $request->category;
-        $category->save();
-        if ($category) {
+        $authUser = auth()->user();
+        if ($authUser) {
+            $category = category::find($request->id);
+            $category->category = $request->category;
+            $category->save();
+            if ($category) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Category update success',
+                ]);
+            }
+        } else {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Category update success',
+                'status' => 'flase',
+                'message' => 'Plese login you',
             ]);
         }
     }
 
     public function deleteCategory($id)
     {
-        $deleteCategory = category::where('id', $id)->delete();
-        if ($deleteCategory) {
+        $authUser = auth()->user();
+        if ($authUser) {
+            $deleteCategory = category::where('id', $id)->delete();
+            if ($deleteCategory) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Delete success fully',
+                ]);
+            }
+        } else {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Delete success fully',
+                'status' => 'flase',
+                'message' => 'Plese login you',
             ]);
         }
     }
 
     public function getCategory()
     {
-        $category = category::all();
-        if ($category) {
+        $authUser = auth()->user();
+        if ($authUser) {
+            $category = category::all();
+            if ($category) {
+                return response()->json([
+                    'status' => 'success',
+                    'Category' => $category,
+                ]);
+            }
+        } else {
             return response()->json([
-                'status' => 'success',
-                'Category' => $category,
+                'status' => 'flase',
+                'message' => 'Plese login you',
             ]);
         }
     }
@@ -77,14 +121,22 @@ class quizeController extends Controller
 
     public function subCategory(Request $request)
     {
-        $category = sub_category::create([
-            'category_id' => $request->input('category'),
-            'sub_category' => $request->input('subCategory'),
-        ]);
-        if ($category) {
+        $authUser = auth()->user();
+        if ($authUser) {
+            $category = sub_category::create([
+                'category' => $request->input('category'),
+                'sub_category' => $request->input('subCategory'),
+            ]);
+            if ($category) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Sub category add successfully',
+                ]);
+            }
+        } else {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Sub category add successfully',
+                'status' => 'flase',
+                'message' => 'Plese login you',
             ]);
         }
     }
@@ -103,7 +155,8 @@ class quizeController extends Controller
     public function updateSubCategory(Request $request)
     {
         $subCategory = sub_category::find($request->id);
-        $subCategory->category_id = $request->category;
+        $subCategory->id = $request->id;
+        $subCategory->category = $request->category;
         $subCategory->sub_category = $request->subCategory;
         $subCategory->save();
         if ($subCategory) {
@@ -204,13 +257,14 @@ class quizeController extends Controller
     public function updateQuestion(Request $request)
     {
         $updateQuestion = questions::find($request->id);
+        $updateQuestion->id = $request->id;
         $updateQuestion->categoryes = $request->category_id;
         $updateQuestion->sub_catergory = $request->sub_catergory_id;
         $updateQuestion->questions = $request->question;
         $updateQuestion->ans = $request->ans;
         $updateQuestion->mark = $request->mark;
         $updateQuestion->save();
-        if ($subCategory) {
+        if ($updateQuestion) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'question update success',
@@ -248,9 +302,15 @@ class quizeController extends Controller
         $questionImg1->image_one = '';
         $questionImg1->save();
         if ($questionImg1 == true) {
-            return response()->json('questions images delete success');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'questions images one delete success'
+            ]);
         } else {
-            return response()->json('questions images delete faile');
+            return response()->json([
+                'status' => 'faile',
+                'message' => 'questions images one delete faile'
+            ]);
         }
     }
 
@@ -284,9 +344,15 @@ class quizeController extends Controller
         $questionImg2->image_two = '';
         $questionImg2->save();
         if ($questionImg2 == true) {
-            return response()->json('questions images delete success');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'questions images two delete success'
+            ]);
         } else {
-            return response()->json('questions images delete faile');
+            return response()->json([
+                'status' => 'faile',
+                'message' => 'questions images two delete faile'
+            ]);
         }
     }
 
@@ -329,17 +395,37 @@ class quizeController extends Controller
 
     public function answare(Request $request)
     {
-        $auth = Auth::user();
-        $category = answere::create([
-            'category' => $request->input('category'),
-            ''
+        $auth = auth()->user();
+        $userId = $auth->id;
+        // $chooseOne = $request->choosOne;
+        // $choosTwo = $request->choosTwo;
 
+        // if ($chooseOne == true) {
+        //     $choosTwoNumber = '0';
+        //     $chooseOneNumber = $chooseOne;
+        // } elseif ($choosTwo == true) {
+        //     $chooseOneNumber = '0';
+        //     $choosTwoNumber = $choosTwo;
+        // } else {
+        //     $chooseOneNumber = '0';
+        //     $choosTwoNumber = '0';
+        // }
 
+        $postAnsewer = answere::create([
+            'user_id' => $userId,
+            'cate_id' => $request->input('catId'),
+            'sub_catecory_id' => $request->input('subCatId'),
+            'mark' => $request->input('mark'),
         ]);
-        if ($category) {
+        if ($postAnsewer) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'Category add successfully',
+                'message' => 'Answere submiteded',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Answere submiteded faile',
             ]);
         }
     }
@@ -349,14 +435,17 @@ class quizeController extends Controller
     public function story(Request $request)
     {
         $request->validate([
-            'imageOne' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'StoryImg' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        $avatar = time() . '.' . $request->avatar->extension();
-        $request->avatar->move(public_path('images'), $avatar);
+        $avatar = time() . '.' . $request->StoryImg->extension();
+        $request->StoryImg->move(public_path('images'), $avatar);
+        $auth = auth()->user();
+        $userName = $auth->name;
         $story = Story::create([
-            'username' => $request->input('name'),
+            'username' => $userName,
             'description' => $request->input('description'),
             'avatar' => $avatar,
+            'servay_name' => $request->servayName,
         ]);
 
         if ($story) {
@@ -364,6 +453,129 @@ class quizeController extends Controller
                 'status' => 'success',
                 'message' => 'Story add successfully',
             ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Story add faile',
+            ]);
         }
+    }
+
+    public function getStory()
+    {
+        $getStory = Story::all();
+        if ($getStory) {
+            return response()->json([
+                'status' => 'success',
+                'Sub category' => $getStory,
+            ]);
+        }
+    }
+
+    public function editStory($id)
+    {
+        $editStory = Story::where('id', $id)->first();
+        if ($editStory) {
+            return response()->json([
+                'status' => 'success',
+                'Story' => $editStory,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'error',
+            ]);
+        }
+    }
+
+    public function updateStory(Request $request)
+    {
+        $updateStory = Story::find($request->id);
+        $updateStory->id = $request->id;
+        $auth = auth()->user();
+        $userName = $auth->name;
+        $updateStory->username = $userName;
+        $updateStory->description = $request->description;
+        $updateStory->servay_name = $request->servay_name;
+        $updateStory->save();
+        if ($updateStory) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Story update success',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'faile',
+                'message' => 'Server error 500',
+            ]);
+        }
+    }
+
+    public function removeStory($id)
+    {
+        $removeStory = Story::where('id', $id)->delete();
+        if ($removeStory) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Story  delete success',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'internal server error',
+            ]);
+        }
+    }
+
+    public function updateStoryImg(Request $request)
+    {
+        $request->validate([
+            'StoryImg' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $avatar = time() . '.' . $request->StoryImg->extension();
+        $request->StoryImg->move(public_path('images'), $avatar);
+
+        $updateStoryImg = Story::find($request->id);
+        $updateStoryImg->id = $request->id;
+        $updateStoryImg->avatar = $avatar;
+        $updateStoryImg->save();
+        if ($updateStoryImg) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Story image update success',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'Story image update faile',
+            ]);
+        }
+    }
+
+    public function deleteStoryImg(Request $request)
+    {
+        $deleteStoryImg = Story::find($request->id);
+        $deleteStoryImg->id = $request->id;
+        if (file_exists('avatar' . $deleteStoryImg->avatar) AND !empty($deleteStoryImg->avatar)) {
+            unlink('avatar' . $deleteStoryImg->avatar);
+        }
+        $deleteStoryImg->avatar = '';
+        $deleteStoryImg->save();
+        if ($deleteStoryImg == true) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Story images  delete success'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'faile',
+                'message' => 'Story images  delete faile'
+            ]);
+        }
+    }
+
+    public function comments()
+    {
+        
     }
 }

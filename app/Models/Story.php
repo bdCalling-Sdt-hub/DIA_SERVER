@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Story extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'username',
+        'description',
+        'avatar',
+        'servay_name'
+    ];
 }

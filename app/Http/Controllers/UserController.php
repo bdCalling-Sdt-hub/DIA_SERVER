@@ -187,7 +187,8 @@ public function profileUpdate(Request $request){
 $validator= Validator::make($request->all(),[
     'id'=>'required',
     'name'=>'required|string',
-    'email'=>'required|email|string'
+    'email'=>'required|email|string',
+    'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048|dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000'
 ]);
 if ($validator->fails()){
     return response()->json($validator->errors(),400);
@@ -196,6 +197,7 @@ $user=User::find($request->id);
 
 $user->name=$request->name ;
 $user->email=$request->email ;
+$user->image=$request->image ;
 $user->save();
 return response()->json(['status'=>true,'message'=>'user is updated','Data'=>$user]);  
     }

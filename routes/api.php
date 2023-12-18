@@ -15,7 +15,6 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 // Route::get('/verification/{id}', [UserController::class, 'verification']);
 Route::post('/verified', [UserController::class, 'verifiedOtp']);
-// Route::get('/resend-otp', [UserController::class, 'resendOtp']);
 Route::post('/getOtp', [UserController::class, 'sendOtp']);
 Route::group(['middleware' => 'api'], function ($routes) {
     Route::get('/profile', [UserController::class, 'profile']);
@@ -30,6 +29,8 @@ Route::group(['middleware' => 'api'], function ($routes) {
     Route::post('/category', [quizeController::class, 'Category']);
     Route::get('/edit/category/{id}', [quizeController::class, 'editCategory']);
     Route::post('/update/category', [quizeController::class, 'updateCategory']);
+    Route::post('/update/category/image', [quizeController::class, 'updateCatImg']);
+    Route::post('/delete/category/image', [quizeController::class, 'deleteCatImg']);
     Route::get('/delete/category/{id}', [quizeController::class, 'deleteCategory']);
     Route::get('/all/category', [quizeController::class, 'getCategory']);
 
@@ -39,6 +40,8 @@ Route::group(['middleware' => 'api'], function ($routes) {
     Route::post('/sub/category', [quizeController::class, 'subCategory']);
     Route::get('/edit/sub/category/{id}', [quizeController::class, 'editSubCategory']);
     Route::post('/update/sub/category', [quizeController::class, 'updateSubCategory']);
+    Route::post('/update/sub/category/image', [quizeController::class, 'updateSubCatImg']);
+    Route::post('/delet/sub/category/image', [quizeController::class, 'deleteSubCatImg']);
     Route::get('/delete/sub/category/{id}', [quizeController::class, 'deleteSubCategory']);
 
     // CATEGORY SUB CATEGORY //
@@ -74,5 +77,11 @@ Route::group(['middleware' => 'api'], function ($routes) {
     // =================== Answere submitted ===========================//
 
     Route::post('/anser/submit', [quizeController::class, 'answare']);
-    
+
+    // =================== Like ===========================//
+    Route::post('/like', [quizeController::class, 'Like']);
+
+    // =================== Comments ===========================//
+    Route::post('/comments', [quizeController::class, 'comments']);
+    Route::get('/delete/comments/{id}', [quizeController::class, 'DeleteComments']);
 });

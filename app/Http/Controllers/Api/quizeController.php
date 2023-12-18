@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\answere;
 use App\Models\category;
+use App\Models\Comment;
+use App\Models\Like;
 use App\Models\questions;
 use App\Models\Story;
 use App\Models\sub_category;
@@ -16,13 +18,18 @@ class quizeController extends Controller
     {
         $this->middleware('auth:api');
     }
-    // CATEGORY //
+
+    // ================CATEGORY========================== //
 
     public function Category(Request $request)
     {
+        $catImg = time() . '.' . $request->catImage->extension();
+        $request->catImage->move(public_path('images'), $catImg);
+
         $authUser = auth()->user();
         if ($authUser) {
             $category = category::create([
+                'cat_img' => $catImg,
                 'category' => $request->input('category'),
             ]);
             if ($category) {
@@ -43,7 +50,7 @@ class quizeController extends Controller
     {
         $authUser = auth()->user();
         if ($authUser) {
-            $editCategory = category::where('id', $id)->get();
+            $editCategory = category::where('id', $id)->first();
             if ($editCategory) {
                 return response()->json([
                     'status' => 'success',
@@ -75,6 +82,48 @@ class quizeController extends Controller
             return response()->json([
                 'status' => 'flase',
                 'message' => 'Plese login you',
+            ]);
+        }
+    }
+
+    public function updateCatImg(Request $request)
+    {
+        $request->validate([
+            'catImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $catImg = time() . '.' . $request->catImage->extension();
+        $request->catImage->move(public_path('images'), $catImg);
+
+        $updateCatImg = category::find($request->id);
+        $updateCatImg->id = $request->id;
+        $updateCatImg->cat_img = $catImg;
+        $updateCatImg->save();
+        if ($updateCatImg) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Category  image update success',
+            ]);
+        }
+    }
+
+    public function deleteCatImg(Request $request)
+    {
+        $deleteCatImg = category::find($request->id);
+        $deleteCatImg->id = $request->id;
+        if (file_exists('cat_img' . $deleteCatImg->cat_img) AND !empty($deleteCatImg->cat_img)) {
+            unlink('cat_img' . $deleteCatImg->cat_img);
+        }
+        $deleteCatImg->cat_img = '';
+        $deleteCatImg->save();
+        if ($deleteCatImg == true) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Category images one delete success'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'faile',
+                'message' => 'Category images one delete faile'
             ]);
         }
     }
@@ -123,11 +172,18 @@ class quizeController extends Controller
     {
         $authUser = auth()->user();
         if ($authUser) {
-            $category = sub_category::create([
+            $subCatImg = time() . '.' . $request->subCatImage->extension();
+            $request->subCatImg->move(public_path('images'), $subCatImg);
+
+            $subCategory = sub_category::create([
                 'category' => $request->input('category'),
                 'sub_category' => $request->input('subCategory'),
+                'title' => $request->input('title'),
+                'sub_title' => $request->input('sub_title'),
+                'description' => $request->input('description'),
+                'sub_cat_img' => $subCatImg,
             ]);
-            if ($category) {
+            if ($subCategory) {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Sub category add successfully',
@@ -158,11 +214,56 @@ class quizeController extends Controller
         $subCategory->id = $request->id;
         $subCategory->category = $request->category;
         $subCategory->sub_category = $request->subCategory;
+        $subCategory->title = $request->title;
+        $subCategory->sub_title = $request->sub_title;
+        $subCategory->description = $request->description;
         $subCategory->save();
         if ($subCategory) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'Sub category update success',
+            ]);
+        }
+    }
+
+    public function updateSubCatImg(Request $request)
+    {
+        $request->validate([
+            'subCatImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $subCatImgs = time() . '.' . $request->subCatImage->extension();
+        $request->subCatImage->move(public_path('images'), $subCatImgs);
+
+        $subCatImg = sub_category::find($request->id);
+        $subCatImg->id = $request->id;
+        $subCatImg->sub_cat_img = $subCatImgs;
+        $subCatImg->save();
+        if ($subCatImg) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Sub category  image update success',
+            ]);
+        }
+    }
+
+    public function deleteSubCatImg(Request $request)
+    {
+        $deleteSubCatImg = sub_category::find($request->id);
+        $deleteSubCatImg->id = $request->id;
+        if (file_exists('sub_cat_img' . $deleteSubCatImg->sub_cat_img) AND !empty($deleteSubCatImg->sub_cat_img)) {
+            unlink('sub_cat_img' . $deleteSubCatImg->sub_cat_img);
+        }
+        $deleteSubCatImg->sub_cat_img = '';
+        $deleteSubCatImg->save();
+        if ($deleteSubCatImg == true) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Sub category images one delete success'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'faile',
+                'message' => 'Sub category images one delete faile'
             ]);
         }
     }
@@ -441,7 +542,9 @@ class quizeController extends Controller
         $request->StoryImg->move(public_path('images'), $avatar);
         $auth = auth()->user();
         $userName = $auth->name;
+        $userId = $auth->id;
         $story = Story::create([
+            'user_id' => $userId,
             'username' => $userName,
             'description' => $request->input('description'),
             'avatar' => $avatar,
@@ -494,6 +597,7 @@ class quizeController extends Controller
         $updateStory->id = $request->id;
         $auth = auth()->user();
         $userName = $auth->name;
+        $userId = $auth->id;
         $updateStory->username = $userName;
         $updateStory->description = $request->description;
         $updateStory->servay_name = $request->servay_name;
@@ -574,8 +678,69 @@ class quizeController extends Controller
         }
     }
 
-    public function comments()
+    // ============= Like ============== //
+
+    public function Like(Request $request)
     {
-        
+        $auth = auth()->user();
+        $authId = $auth->id;
+        $storyId = $request->storyId;
+        if ($authId == 0) {
+            return response()->json('Plese login first');
+        } else {
+            $CheckLike = Like::where('user_id', $authId)->where('story_id', $storyId)->count();
+            if ($CheckLike == true) {
+                $deleteLike = Like::where('user_id', $authId)->where('story_id', $storyId)->delete();
+                if ($deleteLike == true)
+                    return response()->json(['remove like']);
+            } else {
+                $PostLike = new Like();
+                $PostLike->user_id = $authId;
+                $PostLike->story_id = $request->storyId;
+                $PostLike->like = 1;
+                $PostLike->save();
+                if ($PostLike == true) {
+                    return response()->json(['Like is adding']);
+                } else {
+                    return response()->json(['Network error']);
+                }
+            }
+        }
+    }
+
+    // ============= Comments ============== //
+
+    public function comments(Request $request)
+    {
+        $request->validate([
+            'comments' => 'required',
+        ]);
+
+        $auth = auth()->user();
+        $authId = $auth->id;
+
+        if ($authId == true) {
+            $PostComment = new Comment();
+            $PostComment->comment = $request->comments;
+            $PostComment->user_id = $authId;
+            $PostComment->story_id = $request->storyId;
+            $PostComment->save();
+            if ($PostComment == true) {
+                return response()->json(['Comments successfully']);
+            } else {
+                return response()->json(['Network error']);
+            }
+        }
+    }
+
+    public function DeleteComments($id)
+    {
+        $removeComment = Comment::where('id', $id)->delete();
+        if ($removeComment) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Comments delete successfully'
+            ]);
+        }
     }
 }

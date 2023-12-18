@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class category extends Model
+class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'category',
-        'cat_img',
-    ];
+    public function story(): BelongsTo
+    {
+        return $this->belongsTo(Story::class);
+    }
 }

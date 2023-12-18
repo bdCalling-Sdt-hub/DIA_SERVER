@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotification;
 use App\Models\EmailVerification;
 use App\Models\PasswordReset;
 use App\Models\User;
@@ -120,21 +121,21 @@ class UserController extends Controller
         }
     }
 
-    public function resendOtp(Request $request)
-    {
-        $user = User::where('email', $request->email)->first();
-        $otpData = EmailVerification::where('email', $request->email)->first();
+    // public function resendOtp(Request $request)
+    // {
+    //     $user = User::where('email', $request->email)->first();
+    //     $otpData = EmailVerification::where('email', $request->email)->first();
 
-        $currentTime = time();
-        $time = $otpData->created_at;
+    //     $currentTime = time();
+    //     $time = $otpData->created_at;
 
-        if ($currentTime >= $time && $time >= $currentTime - (180 + 5)) {
-            return response()->json(['success' => false, 'msg' => 'Please try after some time']);
-        } else {
-            $this->sendOtp($user);
-            return response()->json(['success' => true, 'msg' => 'OTP has been sent']);
-        }
-    }
+    //     if ($currentTime >= $time && $time >= $currentTime - (180 + 5)) {
+    //         return response()->json(['success' => false, 'msg' => 'Please try after some time']);
+    //     } else {
+    //         $this->sendOtp($user);
+    //         return response()->json(['success' => true, 'msg' => 'OTP has been sent']);
+    //     }
+    // }
 
     public function resetPassword(request $request)
     {
@@ -170,6 +171,39 @@ class UserController extends Controller
         }
     }
 
+    public function profileUpdate(Request $request)
+    {
+        if (auth()->user()) {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'name' => 'required|string',
+                'email' => 'required|email|string',
+                'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048|dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
+            $user = User::find($request->id);
+
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->image = $request->image;
+            $user->save();
+            return response()->json(['status' => true, 'message' => 'user is updated', 'Data' => $user]);
+        } else {
+            return response()->json(['status' => false, 'message' => 'User is not Authenticated']);
+        }
+    }
+
+    public function refreshToken()
+    {
+        try {
+            return response()->json(auth()->user());
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
     public function profileEdit($id)
     {
         $authUser = auth()->user();
@@ -182,34 +216,44 @@ class UserController extends Controller
         }
     }
 
-    public function profileUpdate(Request $request)
-    {
-        if (auth()->user()) {
-            $validator = Validator::make($request->all(), [
-                'id' => 'required',
-                'name' => 'required|string',
-                'email' => 'required|email|string'
-            ]);
-            if ($validator->fails()) {
-                return response()->json($validator->errors(), 400);
-            }
-            $user = User::find($request->id);
+    // public function profileUpdate(Request $request)
+    // {
+    //     if (auth()->user()) {
+    //         $validator = Validator::make($request->all(), [
+    //             'id' => 'required',
+    //             'name' => 'required|string',
+    //             'email' => 'required|email|string'
+    //         ]);
+    //         if ($validator->fails()) {
+    //             return response()->json($validator->errors(), 400);
+    //         }
+    //         $user = User::find($request->id);
 
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->save();
-            return response()->json(['status' => true, 'message' => 'user is updated', 'Data' => $user]);
-        } else {
-            return response()->json(['status' => false, 'message' => 'User is not Authenticated']);
-        }
-    }
+    //         $user->name = $request->name;
+    //         $user->email = $request->email;
+    //         $user->save();
+    //         return response()->json(['status' => true, 'message' => 'user is updated', 'Data' => $user]);
+    //     } else {
+    //         return response()->json(['status' => false, 'message' => 'User is not Authenticated']);
+    //     }
+    // }
 
-    public function refreshToken()
+    // public function refreshToken()
+    // {
+    //     if (auth()->user()) {
+    //         return $this->responseWithToken(auth()->refresh());
+    //     } else {
+    //         return response()->json(['success' => false, 'message' => 'User is not authenticated.']);
+    //     }
+    // }
+    public function sendNotification(Request $request)
     {
-        if (auth()->user()) {
-            return $this->responseWithToken(auth()->refresh());
-        } else {
-            return response()->json(['success' => false, 'message' => 'User is not authenticated.']);
+        try {
+            event(new SendNotification($request->message, auth()->user()->id));
+
+            return response()->json(['success' => true, 'msg' => 'Notification Added']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'msg' => $e->getMessage()]);
         }
     }
 }

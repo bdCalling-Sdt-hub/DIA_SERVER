@@ -3537,6 +3537,7 @@
         },
         {
             "name": "pusher/pusher-php-server",
+<<<<<<< HEAD
             "version": "7.2.4",
             "source": {
                 "type": "git",
@@ -3547,6 +3548,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/de2f72296808f9cafa6a4462b15a768ff130cddb",
                 "reference": "de2f72296808f9cafa6a4462b15a768ff130cddb",
+=======
+            "version": "7.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pusher/pusher-http-php.git",
+                "reference": "416e68dd5f640175ad5982131c42a7a666d1d8e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/416e68dd5f640175ad5982131c42a7a666d1d8e9",
+                "reference": "416e68dd5f640175ad5982131c42a7a666d1d8e9",
+>>>>>>> a27f21ae1f88e79cb380fb4499ddc1e4358a727a
                 "shasum": ""
             },
             "require": {
@@ -3592,9 +3605,15 @@
             ],
             "support": {
                 "issues": "https://github.com/pusher/pusher-http-php/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/pusher/pusher-http-php/tree/7.2.4"
             },
             "time": "2023-12-15T10:58:53+00:00"
+=======
+                "source": "https://github.com/pusher/pusher-http-php/tree/7.2.3"
+            },
+            "time": "2023-05-17T16:00:06+00:00"
+>>>>>>> a27f21ae1f88e79cb380fb4499ddc1e4358a727a
         },
         {
             "name": "ralouphie/getallheaders",
@@ -4265,6 +4284,7 @@
         },
         {
             "name": "react/socket",
+<<<<<<< HEAD
             "version": "v1.15.0",
             "source": {
                 "type": "git",
@@ -4275,6 +4295,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/reactphp/socket/zipball/216d3aec0b87f04a40ca04f481e6af01bdd1d038",
                 "reference": "216d3aec0b87f04a40ca04f481e6af01bdd1d038",
+=======
+            "version": "v1.14.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/socket.git",
+                "reference": "21591111d3ea62e31f2254280ca0656bc2b1bda6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/socket/zipball/21591111d3ea62e31f2254280ca0656bc2b1bda6",
+                "reference": "21591111d3ea62e31f2254280ca0656bc2b1bda6",
+>>>>>>> a27f21ae1f88e79cb380fb4499ddc1e4358a727a
                 "shasum": ""
             },
             "require": {
@@ -4286,7 +4318,11 @@
                 "react/stream": "^1.2"
             },
             "require-dev": {
+<<<<<<< HEAD
                 "phpunit/phpunit": "^9.6 || ^5.7 || ^4.8.36",
+=======
+                "phpunit/phpunit": "^9.5 || ^5.7 || ^4.8.35",
+>>>>>>> a27f21ae1f88e79cb380fb4499ddc1e4358a727a
                 "react/async": "^4 || ^3 || ^2",
                 "react/promise-stream": "^1.4",
                 "react/promise-timer": "^1.10"
@@ -4294,7 +4330,11 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
+<<<<<<< HEAD
                     "React\\Socket\\": "src/"
+=======
+                    "React\\Socket\\": "src"
+>>>>>>> a27f21ae1f88e79cb380fb4499ddc1e4358a727a
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -4333,7 +4373,11 @@
             ],
             "support": {
                 "issues": "https://github.com/reactphp/socket/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/reactphp/socket/tree/v1.15.0"
+=======
+                "source": "https://github.com/reactphp/socket/tree/v1.14.0"
+>>>>>>> a27f21ae1f88e79cb380fb4499ddc1e4358a727a
             },
             "funding": [
                 {
@@ -4341,7 +4385,11 @@
                     "type": "open_collective"
                 }
             ],
+<<<<<<< HEAD
             "time": "2023-12-15T11:02:10+00:00"
+=======
+            "time": "2023-08-25T13:48:09+00:00"
+>>>>>>> a27f21ae1f88e79cb380fb4499ddc1e4358a727a
         },
         {
             "name": "react/stream",

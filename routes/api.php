@@ -84,4 +84,6 @@ Route::group(['middleware' => 'api'], function ($routes) {
     // =================== Comments ===========================//
     Route::post('/comments', [quizeController::class, 'comments']);
     Route::get('/delete/comments/{id}', [quizeController::class, 'DeleteComments']);
+
+    Route::post('/send-notification', [UserController::class, 'sendNotification']);
 });

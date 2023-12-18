@@ -178,16 +178,18 @@ class UserController extends Controller
                 'id' => 'required',
                 'name' => 'required|string',
                 'email' => 'required|email|string',
-                'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048|dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000'
+                'UserImage' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048|dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000'
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 400);
             }
+            $avatar = time() . '.' . $request->UserImage->extension();
+            $request->UserImage->move(public_path('images'), $avatar);
             $user = User::find($request->id);
-
+            $user->id = $request->id;
             $user->name = $request->name;
             $user->email = $request->email;
-            $user->image = $request->image;
+            $user->image = $avatar;
             $user->save();
             return response()->json(['status' => true, 'message' => 'user is updated', 'Data' => $user]);
         } else {

@@ -23,6 +23,11 @@ class quizeController extends Controller
 
     public function Category(Request $request)
     {
+        $request->validate([
+            'category' => 'required',
+            'catImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
         $catImg = time() . '.' . $request->catImage->extension();
         $request->catImage->move(public_path('images'), $catImg);
 
@@ -67,6 +72,9 @@ class quizeController extends Controller
 
     public function updateCategory(Request $request)
     {
+        $request->validate([
+            'category' => 'required',
+        ]);
         $authUser = auth()->user();
         if ($authUser) {
             $category = category::find($request->id);
@@ -170,6 +178,15 @@ class quizeController extends Controller
 
     public function subCategory(Request $request)
     {
+        $request->validate([
+            'category' => 'required',
+            'subCategory' => 'required',
+            'title' => 'required',
+            'sub_title' => 'required',
+            'description' => 'required',
+            'subCatImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
         $authUser = auth()->user();
         if ($authUser) {
             $subCatImg = time() . '.' . $request->subCatImage->extension();
@@ -210,6 +227,13 @@ class quizeController extends Controller
 
     public function updateSubCategory(Request $request)
     {
+        $request->validate([
+            'category' => 'required',
+            'subCategory' => 'required',
+            'title' => 'required',
+            'sub_title' => 'required',
+            'description' => 'required',
+        ]);
         $subCategory = sub_category::find($request->id);
         $subCategory->id = $request->id;
         $subCategory->category = $request->category;
@@ -357,6 +381,13 @@ class quizeController extends Controller
 
     public function updateQuestion(Request $request)
     {
+        $request->validate([
+            'category_id' => 'required',
+            'sub_catergory_id' => 'required',
+            'question' => 'required',
+            'ans' => 'required',
+            'mark' => 'required',
+        ]);
         $updateQuestion = questions::find($request->id);
         $updateQuestion->id = $request->id;
         $updateQuestion->categoryes = $request->category_id;
@@ -496,22 +527,13 @@ class quizeController extends Controller
 
     public function answare(Request $request)
     {
+        $request->validate([
+            'catId' => 'required',
+            'subCatId' => 'required',
+            'mark' => 'required',
+        ]);
         $auth = auth()->user();
         $userId = $auth->id;
-        // $chooseOne = $request->choosOne;
-        // $choosTwo = $request->choosTwo;
-
-        // if ($chooseOne == true) {
-        //     $choosTwoNumber = '0';
-        //     $chooseOneNumber = $chooseOne;
-        // } elseif ($choosTwo == true) {
-        //     $chooseOneNumber = '0';
-        //     $choosTwoNumber = $choosTwo;
-        // } else {
-        //     $chooseOneNumber = '0';
-        //     $choosTwoNumber = '0';
-        // }
-
         $postAnsewer = answere::create([
             'user_id' => $userId,
             'cate_id' => $request->input('catId'),
@@ -536,6 +558,8 @@ class quizeController extends Controller
     public function story(Request $request)
     {
         $request->validate([
+            'description' => 'required',
+            'servayName' => 'required',
             'StoryImg' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         $avatar = time() . '.' . $request->StoryImg->extension();
@@ -593,6 +617,10 @@ class quizeController extends Controller
 
     public function updateStory(Request $request)
     {
+        $request->validate([
+            'description' => 'required',
+            'servayName' => 'required',
+        ]);
         $updateStory = Story::find($request->id);
         $updateStory->id = $request->id;
         $auth = auth()->user();
